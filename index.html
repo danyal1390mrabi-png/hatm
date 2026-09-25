@@ -3716,7 +3716,7 @@ function updateConvHeader(){
     nameEl.textContent = currentConv.user.name;
     const online = !!onlineUsersState[currentConv.user.username];
     subEl.innerHTML = online ? '<span class="online-badge">آنلاین</span>' : ('@' + escapeHtml(currentConv.user.username));
-    if (avatarEl){ avatarEl.style.backgroundImage = ''; avatarEl.style.background = colorFor(currentConv.user.name); avatarEl.textContent = initials(currentConv.user.name); }
+    if (avatarEl){ setAvatarElement(avatarEl, currentConv.user, currentConv.user.name); }
   } else if (currentConv.type === 'dmBot'){
     nameEl.textContent = currentConv.bot.name;
     subEl.textContent = currentConv.bot.tagline || 'دستیار هوش مصنوعی';
@@ -5137,6 +5137,12 @@ groupInfoBtn.addEventListener('click', async () => {
 
   const { data: members } = await supabaseClient.from('room_members')
     .select('*').eq('room_id', room.id).order('joined_at', { ascending: true });
+  const memberUsernames = (members || []).map(m => m.username);
+  let memberProfiles = {};
+  if (memberUsernames.length){
+    const { data: profiles } = await supabaseClient.from('users').select('username,name,avatar_url').in('username', memberUsernames);
+    (profiles || []).forEach(pr => { memberProfiles[pr.username] = pr; });
+  }
   groupMembersList.innerHTML = '';
   const roleLabel = { owner: '👑 مالک', admin: '🛡️ ادمین', member: 'عضو' };
   (members || []).forEach(m => {
@@ -5144,7 +5150,7 @@ groupInfoBtn.addEventListener('click', async () => {
     row.className = 'modal-list-item';
     const canManage = myRole === 'owner' && m.username !== myProfile.username;
     row.innerHTML = `
-      <span class="avatar" style="background:${colorFor(m.username)}">${initials(m.username)}</span>
+      <span class="avatar"></span>
       <div style="flex:1; min-width:0; text-align:right;">
         <div style="font-size:13px; font-weight:700;">${escapeHtml(m.username)}</div>
         <div style="font-size:11px; color:var(--muted);">${roleLabel[m.role] || 'عضو'}</div>
@@ -5152,6 +5158,7 @@ groupInfoBtn.addEventListener('click', async () => {
       ${canManage ? `<button class="modal-close" style="width:auto;margin:0;padding:7px 9px;font-size:10.5px;" data-action="toggleadmin">${m.role === 'admin' ? 'حذف ادمین' : 'ادمین کن'}</button>
       <button class="modal-close" style="width:auto;margin:0;padding:7px 9px;font-size:10.5px;color:#ff8080;" data-action="remove">حذف</button>` : ''}
     `;
+    setAvatarElement(row.querySelector('.avatar'), memberProfiles[m.username], m.username);
     if (canManage){
       row.querySelector('[data-action="toggleadmin"]').addEventListener('click', async (e) => {
         e.stopPropagation();
