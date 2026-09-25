@@ -3724,6 +3724,8 @@ function updateConvHeader(){
   }
   // دکمه تماس فقط برای گروه و چت خصوصی با یه شخص واقعی فعاله، نه با بات
   if (callBtn) callBtn.style.display = (currentConv.type === 'dmBot') ? 'none' : 'flex';
+  // دکمه‌ی اطلاعات گروه فقط برای گروه‌ها نشون داده بشه
+  if (groupInfoBtn) groupInfoBtn.style.display = (currentConv.type === 'room') ? 'flex' : 'none';
 }
 
 function renderMessage(msg, opts){
@@ -4319,6 +4321,7 @@ newGroupCreateBtn.addEventListener('click', async () => {
     .select().single();
 
   if (error || !data){ newGroupError.textContent = 'ساخت گروه ناموفق بود.'; return; }
+  await ensureRoomOwner(data.id); // سازنده‌ی گروه باید مالک ثبت بشه
   myRoomIds.add(String(data.id)); // سازنده‌ی گروه خودش عضوشه، لازم نیست ازش بپرسیم
   newGroupModal.classList.remove('open');
   selectConversation({ type: 'room', room: data });
@@ -5589,7 +5592,7 @@ function setupMobileKeyboardFix(){
     const c=conv.channel,role=channelState.roles.get(String(c.id));
     document.getElementById('convTitleName').textContent=c.name;document.getElementById('convTitleSub').textContent='@'+c.slug+' · '+(role==='owner'?'مالک':role==='admin'?'ادمین':'عضو');
     const av=document.getElementById('convAvatar');applyEntityAvatar(av,c,'📢');
-    if(callBtn)callBtn.style.display='none';if(groupInfoBtn)groupInfoBtn.style.display=(role==='owner'||role==='admin')?'flex':'none';
+    if(callBtn)callBtn.style.display='none';if(groupInfoBtn)groupInfoBtn.style.display='none';
     const {data,error}=await supabaseClient.from('channel_posts').select('*').eq('channel_id',c.id).order('created_at',{ascending:true}).limit(500);
     if(error){renderSystemHint('بارگذاری کانال ناموفق بود. SQL migration و دسترسی Supabase را بررسی کن.');return;}
     (data||[]).forEach(renderChannelPost);chatArea.scrollTop=chatArea.scrollHeight;
