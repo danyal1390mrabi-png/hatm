@@ -5324,7 +5324,7 @@ function applyEntityAvatar(el, entity, fallbackGlyph){
 // همون منطق بالا ولی برای رشته‌های HTML (لیست‌ها) — استایل اینلاین و گلیف رو برمی‌گردونه
 function entityAvatarStyle(entity){
   const url = entity && entity.avatar_url;
-  if (url) return `background-image:url("${String(url).replace(/"/g,'&quot;')}");background-size:cover;background-position:center;`;
+  if (url) return `background-image:url('${String(url).replace(/'/g, '%27')}');background-size:cover;background-position:center;`;
   return `background:${colorFor((entity && entity.name) || '?')};`;
 }
 function entityAvatarGlyph(entity, fallbackGlyph){
