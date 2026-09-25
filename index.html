@@ -3716,11 +3716,11 @@ function updateConvHeader(){
     nameEl.textContent = currentConv.user.name;
     const online = !!onlineUsersState[currentConv.user.username];
     subEl.innerHTML = online ? '<span class="online-badge">آنلاین</span>' : ('@' + escapeHtml(currentConv.user.username));
-    if (avatarEl){ avatarEl.style.background = colorFor(currentConv.user.name); avatarEl.textContent = initials(currentConv.user.name); }
+    if (avatarEl){ avatarEl.style.backgroundImage = ''; avatarEl.style.background = colorFor(currentConv.user.name); avatarEl.textContent = initials(currentConv.user.name); }
   } else if (currentConv.type === 'dmBot'){
     nameEl.textContent = currentConv.bot.name;
     subEl.textContent = currentConv.bot.tagline || 'دستیار هوش مصنوعی';
-    if (avatarEl){ avatarEl.style.background = currentConv.bot.color; avatarEl.textContent = currentConv.bot.avatar; }
+    if (avatarEl){ avatarEl.style.backgroundImage = ''; avatarEl.style.background = currentConv.bot.color; avatarEl.textContent = currentConv.bot.avatar; }
   }
   // دکمه تماس فقط برای گروه و چت خصوصی با یه شخص واقعی فعاله، نه با بات
   if (callBtn) callBtn.style.display = (currentConv.type === 'dmBot') ? 'none' : 'flex';
