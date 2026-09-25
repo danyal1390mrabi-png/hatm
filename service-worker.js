@@ -20,8 +20,12 @@ self.addEventListener('activate', (event) => {
 // Network-first for everything (chat needs live data); fall back to cache only when offline,
 // and if there's nothing cached either, return a real error Response instead of undefined
 // (returning undefined from respondWith throws "Failed to convert value to 'Response'").
+// نکته‌ی مهم: فقط درخواست‌های هم‌مبدأ (خود سایت) رو مدیریت کن؛ فایل‌های خارجی
+// (عکس/صدا/ویدیو/فایل روی Supabase Storage) رو دست‌نخورده به خود مرورگر بسپار،
+// وگرنه گاهی به‌جای عکس واقعی یه پاسخ خالی/سیاه برمی‌گرده.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  if (new URL(event.request.url).origin !== self.location.origin) return;
   event.respondWith(
     fetch(event.request).catch(async () => {
       const cached = await caches.match(event.request);
