@@ -3579,12 +3579,22 @@ async function selectConversation(conv){
     const { data: existing } = await supabaseClient
       .from('messages').select('*').eq('room_id', conv.room.id)
       .order('created_at', { ascending: true });
+    // عکس پروفایل فرستنده‌ها رو یک‌جا بگیر (چون خود ستون‌های پیام avatar_url ندارن)
+    const senderUsernames = [...new Set((existing || []).map(m => m.username).filter(Boolean))];
+    if (senderUsernames.length){
+      const { data: senderProfiles } = await supabaseClient.from('users').select('username,avatar_url').in('username', senderUsernames);
+      (senderProfiles || []).forEach(pr => { roomProfileCache[pr.username] = pr; });
+    }
     (existing || []).forEach(m => renderMessage(normalizeRoomMsg(m)));
     refreshPinnedBanner();
     chatArea.scrollTop = chatArea.scrollHeight;
 
     msgChannel = supabaseClient.channel('messages-changes-' + conv.room.id)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'room_id=eq.' + conv.room.id }, payload => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'room_id=eq.' + conv.room.id }, async payload => {
+        if (payload.new.username && !roomProfileCache[payload.new.username]){
+          const { data: pr } = await supabaseClient.from('users').select('username,avatar_url').eq('username', payload.new.username).maybeSingle();
+          if (pr) roomProfileCache[pr.username] = pr;
+        }
         renderMessage(normalizeRoomMsg(payload.new));
         chatArea.scrollTop = chatArea.scrollHeight;
       })
@@ -3643,6 +3653,8 @@ async function selectConversation(conv){
   }
 }
 
+// عکس پروفایل اعضای گروه (چون خود جدول messages این ستون رو نداره) — یوزرنیم به {username,avatar_url}
+let roomProfileCache = {};
 function normalizeRoomMsg(m){
   return {
     id: m.id, senderName: m.name, senderUsername: m.username, text: m.text,
@@ -3654,7 +3666,10 @@ function normalizeRoomMsg(m){
     video_path: m.video_path || ((m.file_type || '').startsWith('video/') ? (m.file_path || null) : null), sticker_emoji: m.sticker_emoji || null,
     forwarded_from_name: m.forwarded_from_name || null, forwarded_from_type: m.forwarded_from_type || null,
     table: 'messages',
-    profileData: { name: m.name, username: m.username, phone: m.phone, age: m.age, city: m.city, gender: m.gender }
+    profileData: {
+      name: m.name, username: m.username, phone: m.phone, age: m.age, city: m.city, gender: m.gender,
+      avatar_url: (myProfile && m.username === myProfile.username) ? myProfile.avatar_url : (roomProfileCache[m.username] && roomProfileCache[m.username].avatar_url)
+    }
   };
 }
 function normalizeDmMsg(m){
