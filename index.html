@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
-<title>آوین</title>
+<title>آیوین</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f0c29">
 <link rel="icon" href="icon-192.png">
@@ -1104,7 +1104,7 @@
     <div class="home-shell">
       <div class="home-topbar">
         <button class="home-fab" id="homeFabBtn" title="ساخت اتاق جدید">+</button>
-        <div class="home-title">💬 آوین</div>
+        <div class="home-title">💬 آیوین</div>
         <button class="home-menu-btn" id="homeMenuBtn" title="تنظیمات">☰</button>
       </div>
 
@@ -1223,7 +1223,7 @@
           <div class="settings-item settings-item-danger" data-setting="logout"><span class="si-icon">🚪</span><span class="si-label">خروج از حساب</span><span class="si-chevron">‹</span></div>
 
           <div class="install-banner" style="margin-top:18px;">
-            <p>آوین را برای اندروید نصب کن</p>
+            <p>آیوین را برای اندروید نصب کن</p>
             <a href="https://chatdan.danyalcode.ir/" target="_blank" rel="noopener">نصب اپلیکیشن</a>
           </div>
         </div>
@@ -2741,7 +2741,7 @@ document.querySelectorAll('.settings-item').forEach(el => {
     const key = el.dataset.setting;
     if (key === 'account'){ if (myProfile) showProfile(myProfile); else comingSoon('حساب کاربری'); }
     else if (key === 'notifications'){ openSmsSettingsModal(); }
-    else if (key === 'about') showAppAlert('آوین — یک پیام‌رسان ساده و امن برای گفتگوی گروهی، خصوصی و هوش مصنوعی.\nنسخه ۱.۰');
+    else if (key === 'about') showAppAlert('آیوین — یک پیام‌رسان ساده و امن برای گفتگوی گروهی، خصوصی و هوش مصنوعی.\nنسخه ۱.۰');
     else if (key === 'logout') logout();
     else comingSoon(el.querySelector('.si-label').textContent);
   });
