@@ -3797,7 +3797,7 @@ function renderMessage(msg, opts){
   }
 
   row.innerHTML = `
-    <span class="avatar" style="background:${avatarBg}${avatarUrl ? `;background-image:url("${escapeHtml(avatarUrl)}");background-size:cover;background-position:center` : ''}">${avatarUrl ? '' : avatarContent}</span>
+    <span class="avatar" style="background:${avatarBg}${avatarUrl ? `;background-image:url('${String(avatarUrl).replace(/'/g, '%27')}');background-size:cover;background-position:center` : ''}">${avatarUrl ? '' : avatarContent}</span>
     <div class="msg-wrap">
       <div class="msg-meta">${nameLabel}${pinTag}<span>${formatTime(msg.created_at)}</span>${editedTag}</div>
       <div style="display:flex; align-items:flex-end; gap:6px;">
