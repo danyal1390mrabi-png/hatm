@@ -1,4 +1,4 @@
-const CACHE = 'ayvin-shell-v9';
+const CACHE = 'ayvin-shell-v10';
 const SHELL = ["./", "index.html", "manifest.json", "icon-192.png", "css/app.css", "css/meet-panel.css", "js/00-config.js", "js/01-core.js", "js/02-realtime.js", "js/03-block-report.js", "js/04-ai-bots.js", "js/05-rooms.js", "js/06-home-tabs.js", "js/07-auth.js", "js/08-chat-switch.js", "js/09-msg-tools.js", "js/10-backend-bridge.js", "js/11-send-media.js", "js/12-roles-invite.js", "js/13-profile-keyboard.js", "js/14-channels.js", "js/meet-config.js", "js/15-meet-panel.js", "js/16-jitsi-call.js", "js/99-guard.js"];
 
 self.addEventListener('install', e => {
